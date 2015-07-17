@@ -4,7 +4,7 @@
 ;
 ; PURPOSE:
 ;   Two days ago I encountered a problem with plotting spectra using:
-;     plot, x, y, PSYM=10
+;       plot, x, y, PSYM=10
 ;   in IDL when I tried to fill the area between the signal and continuum 
 ;   with some color. I firstly tried the POLYFILL, but failed with the PSYM,
 ;   namely unable to set PSYM=10 if using POLYFILL directly. Then I tried to
@@ -23,7 +23,7 @@
 ; KEYWORD INPUTS:
 ;   psym      =: Set the plotpsym. For plotting the spectrum, we use 10.
 ;   linecolor =: Set the spetrum stroke color. 
-;   fillcolor =: Set the color that fill the space between flux value 
+;   fillcolor =: Set the color that fill the space between flux value
 ;                and the continuum value.
 ;
 ; KEYWORDS SWITCHES:
@@ -35,14 +35,14 @@
 ; EXAMPLES:
 ;    IDL> x = ...          ; input the velocity/frequency/wavelength array
 ;    IDL> y = ...          ; input the corresponding flux value array
-;    IDL> continuum = ...  ; input the corresponding continuum value array
+;    IDL> continuum = ...  ; input the corresponding continuum value (array)
 ;    IDL> fillspec, x, y, continuum, psym=10, linecolor=220, fillcolor=50
 ;
 ; SIDEEFFECT:
 ;   ...
 ;
 ; RESTRICTIONS:
-;   ...
+;   (Please check if all the variables are in the same order)
 ;
 ; MODIFICATION HISTORY:
 ;   Write, 2012-04-21, Chentao Yang (yangcht@gmail.com)
@@ -51,15 +51,19 @@
 ;   
 ;   Edited on 2015-01-20, Chentao Yang, 
 ;   Fix the bug when values beyong YRANGEs are presented. 
+;   
+;   Edited on 2015-07-17, Chentao Yang, 
+;   Fix the bug when the continuum is not a constant value.
+;   Fix the bug that this pro may change the variables.
 ;- 
 
 
-PRO fillspec, x, y, cont, LINECOLOR=LINECOLOR, psym=psym, FILLCOLOR=FILLCOLOR
+PRO fillspec, x0, y0, cont0, LINECOLOR=LINECOLOR, psym=psym, FILLCOLOR=FILLCOLOR
 loadct=5
 
-x_sort=sort(x)
-x=x(x_sort)
-y=y(x_sort)
+x_sort=sort(x0)
+x=x0(x_sort)
+y=y0(x_sort)
 n=n_elements(x)
 
 OPLOT, x, y, COLOR=LINECOLOR, psym=psym
@@ -73,7 +77,15 @@ xx = [min(x), min(x), xx, max(x),max(x)]
 
 ; Create array with the corresponding y-values
 yy = REBIN(y, N_ELEMENTS(y)*2, /Sample)
-yy = [cont, yy, cont]
+
+; Check if the continuum is a constant
+IF (N_ELEMENTS(cont) NE 1) THEN BEGIN
+	cont=cont0(x_sort)
+	yy = [cont[0], yy, cont[n_elements(cont)-1]]
+ENDIF ELSE BEGIN
+	yy = [cont, yy, cont]
+ENDELSE
+
 y_mi_indx = where(yy LT !Y.CRANGE[0])
 y_ma_indx = where(yy GT !Y.CRANGE[1])
 IF (y_mi_indx[0] GT 0) THEN yy[y_mi_indx]=yy[y_mi_indx]/yy[y_mi_indx]*!Y.CRANGE[0] 
