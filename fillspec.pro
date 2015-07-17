@@ -88,8 +88,8 @@ ENDELSE
 
 y_mi_indx = where(yy LT !Y.CRANGE[0])
 y_ma_indx = where(yy GT !Y.CRANGE[1])
-IF (y_mi_indx[0] GT 0) THEN yy[y_mi_indx]=yy[y_mi_indx]/yy[y_mi_indx]*!Y.CRANGE[0] 
-IF (y_ma_indx[0] GT 0) THEN yy[y_ma_indx]=yy[y_ma_indx]/yy[y_ma_indx]*!Y.CRANGE[1] 
+IF (y_mi_indx[0] GT 0) THEN yy[y_mi_indx]=FLTARR(N_ELEMENTS(y_mi_indx))+!Y.CRANGE[0] 
+IF (y_ma_indx[0] GT 0) THEN yy[y_ma_indx]=FLTARR(N_ELEMENTS(y_ma_indx))+!Y.CRANGE[1] 
 
 
 
