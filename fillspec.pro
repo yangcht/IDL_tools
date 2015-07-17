@@ -79,11 +79,11 @@ xx = [min(x), min(x), xx, max(x),max(x)]
 yy = REBIN(y, N_ELEMENTS(y)*2, /Sample)
 
 ; Check if the continuum is a constant
-IF (N_ELEMENTS(cont) NE 1) THEN BEGIN
+IF (N_ELEMENTS(cont0) NE 1) THEN BEGIN
 	cont=cont0(x_sort)
 	yy = [cont[0], yy, cont[n_elements(cont)-1]]
 ENDIF ELSE BEGIN
-	yy = [cont, yy, cont]
+	yy = [cont0, yy, cont0]
 ENDELSE
 
 y_mi_indx = where(yy LT !Y.CRANGE[0])
