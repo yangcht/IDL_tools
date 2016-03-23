@@ -1,2 +1,2 @@
 # IDL-tools
-Personal little IDL scripts
+Small IDL scripts for (astronomical) visualisation, mostly. 
