@@ -1,10 +1,12 @@
 ;+
 ; NAME:
 ;   noema_time
+;
+;
 ; PURPOSE:
-;   Calculating the t_on and t_total needed for requested RMS at NOEMA telescope
-;	based on the telescope status described in the 2016 winter IRAM call.
-;   Basic formular
+;   Calculating the on source and total time needed for requested signal to noise ratio at 
+;   NOEMA telescope based on the telescope status described in the 2016 winter IRAM call.
+;   	Basic formular (referenceL http://www.iram.fr/GENERAL/calls/w16/NOEMACapabilities.pdf)
 ;	        rms  = (J_pk*T_sys)/(ita*sqrt(N_ant*(N_ant-1))*t_on*band)/sqrt(N_pol)
 ;           t_on = ((J_pk*T_sys)^2./(ita^2.*rms^2.*N_ant*(N_ant-1)*band*N_pol)
 ;  
@@ -31,11 +33,24 @@
 ;					  total time needed in hour]
 ; 
 ;
+;   PARAMETERS:
+;          print_res: if /print_res is set, then this pro will print the 
+;		              calculation results on the screen.
+;
+;
 ;   RESTRICTIONS:
 ;           1. The parameters used for the NOEMA telescope will 
 ;				change according to each call.
 ;           2. For the source below del = 20 deg, should increase 
 ;				the observation time according to the situation.
+;
+;   EXAMPLES:
+;			     IDL> noema_time, 800, 2, 2, 200, 2, 2, /print_res
+;			
+;			Obs freq = 266.7 GHz, resolution =   5.3 MHz, t_on =  1.6 hours, t_total =  2.6 hours,
+;			(Note that the T_sys only counts for the sources at del > 20 deg)
+;
+;
 ;
 ;
 ;   MODIFICATION HISTORY:
@@ -45,7 +60,7 @@
 
 
 
-PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results = results
+PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results = results, print_res = print_res
 	; NOEMA Receiver band name
 	band_name   =  ["Band 1", "Band 2", "Band 3", "Band 4"]
 	; Jy/K, conversion factor from Kelvin to Jansky
@@ -88,32 +103,32 @@ PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results
 	 
 	 t_on    = t_on/3600	 
 	 t_total = t_on*1.6
-	
-	 results = [nu_obs/1.0e9, band/1.0e6, t_on, t_total]
-	 textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f6.1)')+$
-	 			' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
-				' MHz, '+'t_on ='+STRING(t_on, FORMAT='(f5.1)')+' hours, '+$
-				't_total ='+STRING(t_total, FORMAT='(f5.1)')+' hours, '+$
-				string(13B) + string(10B)+$
-				'(Note that the T_sys only counts for the sources at del > 20 deg)'+$
-				string(13B) + string(10B)
-	
 	 
-	; print, textout
+	 
+	 results = [nu_obs/1.0e9, band/1.0e6, t_on, t_total]
+	 
+	 IF t_on GE 0.1 THEN BEGIN 
+		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f6.1)')+$
+					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
+					' MHz, '+'t_on ='+STRING(t_on, FORMAT='(f5.1)')+' hours, '+$
+					't_total ='+STRING(t_total, FORMAT='(f5.1)')+' hours, '+$
+					string(13B) + string(10B)+$
+					'(Note that the T_sys only counts for the sources at del > 20 deg)'+$
+					string(13B) + string(10B)
+	ENDIF ELSE BEGIN
+		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f6.1)')+$
+					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
+					' MHz, '+'t_on ='+STRING(t_on*60, FORMAT='(f5.2)')+' mins, '+$
+					't_total ='+STRING(t_total*60, FORMAT='(f5.2)')+' mins, '+$
+					string(13B) + string(10B)+$
+					'(Note that the T_sys only counts for the sources at del > 20 deg)'+$
+					string(13B) + string(10B)
+	ENDELSE
+	
+
+	IF keyword_set(print_res) THEN print, textout
 	 
 	 
 end_of_pro: 
 
 END		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
