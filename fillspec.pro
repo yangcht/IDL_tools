@@ -3,18 +3,11 @@
 ;   FILLSPEC
 ;
 ; PURPOSE:
-;   Two days ago I encountered a problem with plotting spectra using:
+;   Filling the "histogram" like plot below with solid colors.
 ;       plot, x, y, PSYM=10
-;   in IDL when I tried to fill the area between the signal and continuum 
-;   with some color. I firstly tried the POLYFILL, but failed with the PSYM,
-;   namely unable to set PSYM=10 if using POLYFILL directly. Then I tried to
-;   search if there exists any .pro file written by others for this purpose, 
-;   but turned out to be nothing. In the end, under the help of Google and
-;   Kexin, I found a way through some simple calculation that can solve this 
-;   by POLYFILL.
-;
+;   
 ; CALLING SEQUENCE:
-;   fillspec, x, y, continuum, psym=, linecolor=, fillcolor=
+;   fillspec, x, y, continuum, psym=pysm, linecolor=linecolor, fillcolor=fillcolor
 ;
 ; INPUTS:
 ;   x, y, continuum. The velocity/frequency/wavelength, flux value and 
