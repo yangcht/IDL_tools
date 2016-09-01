@@ -7,8 +7,8 @@
 ;   Calculating the on source and total time needed for requested signal to noise ratio at 
 ;   NOEMA telescope based on the telescope status described in the 2016 winter IRAM call.
 ;   	Basic formular (referenceL http://www.iram.fr/GENERAL/calls/w16/NOEMACapabilities.pdf)
-;	        rms  = (J_pk*T_sys)/(ita*sqrt(N_ant*(N_ant-1))*t_on*band)/sqrt(N_pol)
-;           t_on = ((J_pk*T_sys)^2./(ita^2.*rms^2.*N_ant*(N_ant-1)*band*N_pol)
+;	        rms  = (J_pk * T_sys) / (ita * sqrt(N_ant * (N_ant-1)) * t_on * band) / sqrt(N_pol)
+;           t_on = ( (J_pk * T_sys)^2. / (ita^2. * rms^2. * N_ant * (N_ant-1) * band * N_pol)
 ;  
 ;           
 ;   INPUTS: 
@@ -81,19 +81,24 @@ PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results
 	; Number of polarizations
 	N_pol       =  [1, 2]
 	
-	; convert the unit into cgs
-	nu_obs  =  (nu_rest*1.0e9)/(1+redshift)
-	band    =  resolution*nu_obs/1.0e5
-	rms     =  DOUBLE(int_flux)/linewidth*2.35*0.3989/DOUBLE(snr)
+	; convert the unit 
+	nu_obs  =  (nu_rest*1.0e9)/(1+redshift)                             ; Hz
+	band    =  resolution*nu_obs/3.0e5                                  ; Hz
+	rms     =  DOUBLE(int_flux)/linewidth*2.35*0.3989/DOUBLE(snr)       ; Jy
 	
 	IF band LT 2.0e6 THEN N_a = N_ant[0] ELSE N_a = N_ant[1]
 	
 	CASE 1 OF
-		(nu_obs GE 76.5*1.0e9) AND (nu_obs LT 110*1.0e9):  t_on = (J_pk[0]*T_sys[0])^2./(ita[0]^2.*rms^2.*N_a*(N_a-1)*band*N_pol[1]) 
-		 (nu_obs GE 110*1.0e9) AND (nu_obs LE 116*1.0e9):  t_on = (J_pk[0]*T_sys[1])^2./(ita[0]^2.*rms^2.*N_a*(N_a-1)*band*N_pol[1])
-		 (nu_obs GE 130*1.0e9) AND (nu_obs LT 150*1.0e9):  t_on = (J_pk[1]*T_sys[2])^2./(ita[1]^2.*rms^2.*N_a*(N_a-1)*band*N_pol[1])
-		 (nu_obs GE 150*1.0e9) AND (nu_obs LE 178*1.0e9):  t_on = (J_pk[1]*T_sys[3])^2./(ita[1]^2.*rms^2.*N_a*(N_a-1)*band*N_pol[1])
-		 (nu_obs GE 202*1.0e9) AND (nu_obs LE 274*1.0e9):  t_on = (J_pk[2]*T_sys[4])^2./(ita[2]^2.*rms^2.*N_a*(N_a-1)*band*N_pol[1])
+		(nu_obs GE 76.5*1.0e9) AND (nu_obs LT 110*1.0e9): $ 
+			t_on = (J_pk[0] * T_sys[0])^2. / (ita[0]^2. * rms^2. * N_a * (N_a-1) * band * N_pol[1]) 
+		 (nu_obs GE 110*1.0e9) AND (nu_obs LE 116*1.0e9): $ 
+		 	t_on = (J_pk[0] * T_sys[1])^2. / (ita[0]^2. * rms^2. * N_a * (N_a-1) * band * N_pol[1])
+		 (nu_obs GE 130*1.0e9) AND (nu_obs LT 150*1.0e9): $                               
+		 	t_on = (J_pk[1] * T_sys[2])^2. / (ita[1]^2. * rms^2. * N_a * (N_a-1) * band * N_pol[1])
+		 (nu_obs GE 150*1.0e9) AND (nu_obs LE 178*1.0e9): $                               
+		 	t_on = (J_pk[1] * T_sys[3])^2. / (ita[1]^2. * rms^2. * N_a * (N_a-1) * band * N_pol[1])
+		 (nu_obs GE 202*1.0e9) AND (nu_obs LE 274*1.0e9): $                               
+		 	t_on = (J_pk[2] * T_sys[4])^2. / (ita[2]^2. * rms^2. * N_a * (N_a-1) * band * N_pol[1])
 		  ELSE: BEGIN
 			  PRINT, ' '+string(13B) + string(10B)+'Sky frequency '+$
 			  STRING(nu_obs/1.0e9, FORMAT='(f6.1)')+'GHz is not in the NOEMA bands.'+$
@@ -108,14 +113,14 @@ PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results
  		 (nu_obs GE 202*1.0e9) AND (nu_obs LE 274*1.0e9):  band_name_selected = band_name[2]
  	ENDCASE
 	 
-	 t_on    = t_on/3600	 
+	 t_on    = t_on/3600.0	 
 	 t_total = t_on*1.6
 	 
 	 
 	 results = [nu_obs/1.0e9, band/1.0e6, t_on, t_total]
 	 
 	 IF t_on GE 0.1 THEN BEGIN 
-		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f6.1)')+$
+		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f7.2)')+$
 					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
 					' MHz, '+'t_on ='+STRING(t_on, FORMAT='(f5.1)')+' hours, '+$
 					't_total ='+STRING(t_total, FORMAT='(f5.1)')+' hours, '+$
@@ -123,7 +128,7 @@ PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results
 					'(Note that the T_sys only counts for the sources at del > 20 deg)'+$
 					string(13B) + string(10B)
 	ENDIF ELSE BEGIN
-		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f6.1)')+$
+		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f7.2)')+$
 					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
 					' MHz, '+'t_on ='+STRING(t_on*60, FORMAT='(f5.2)')+' mins, '+$
 					't_total ='+STRING(t_total*60, FORMAT='(f5.2)')+' mins, '+$
