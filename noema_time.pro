@@ -45,11 +45,18 @@
 ;				the observation time according to the situation.
 ;
 ;   EXAMPLES:
-;			     IDL> noema_time, 800, 2, 2, 200, 2, 2, /print_res
+;           For an expcted line at rest-frame frequency 800 GHz, in a source at redshift = 3.5,  
+;           expected integrated line flux equals 0.9 Jy km/s, expected linewidth = 200 km/s,
+;           requested spectral resolution = 50 km/s, requested signal to noise ratio = 5.
+;           You could run the code like below:
+; 
+;			     IDL> noema_time, 800, 3.5, 0.9, 200, 50, 5, results = results, /print_res
 ;			
-;			Obs freq = 266.7 GHz, resolution =   5.3 MHz, t_on =  1.6 hours, t_total =  2.6 hours,
-;			(Note that the T_sys only counts for the sources at del > 20 deg)
+;           The results will be output through variable "results". Since "print_res" is selected,
+;           the results will be printed out as below:
 ;
+;				"Obs freq = 177.8 GHz, resolution =  88.9 MHz, t_on =  1.3 hours, t_total =  2.1 hours,
+;				 (Note that the T_sys only counts for the sources at del > 20 deg)"
 ;
 ;
 ;
