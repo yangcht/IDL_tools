@@ -121,16 +121,20 @@ PRO noema_time, nu_rest, redshift, int_flux, linewidth, resolution, snr, results
 	 
 	 IF t_on GE 0.1 THEN BEGIN 
 		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f7.2)')+$
-					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
-					' MHz, '+'t_on ='+STRING(t_on, FORMAT='(f5.1)')+' hours, '+$
+					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+' MHz, '+$
+					string(13B) + string(10B)+$
+					'Requested rms = ' +STRING(rms*1000.d, FORMAT='(f8.4)')+ ' mJy, '+$
+					't_on ='+STRING(t_on, FORMAT='(f5.1)')+' hours, '+$
 					't_total ='+STRING(t_total, FORMAT='(f5.1)')+' hours, '+$
 					string(13B) + string(10B)+$
 					'(Note that the T_sys only counts for the sources at del > 20 deg)'+$
 					string(13B) + string(10B)
 	ENDIF ELSE BEGIN
 		textout = ' '+string(13B) + string(10B)+ 'Obs freq ='+STRING(nu_obs/1.0e9, FORMAT='(f7.2)')+$
-					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+$
-					' MHz, '+'t_on ='+STRING(t_on*60, FORMAT='(f5.2)')+' mins, '+$
+					' GHz, '+'resolution ='+STRING(band/1.0e6, FORMAT='(f6.1)')+' MHz, '+ $
+					string(13B) + string(10B)+$
+					'Requested rms = ' +STRING(rms*1000.d, FORMAT='(f8.4)')+ ' mJy, '+$
+					't_on ='+STRING(t_on*60, FORMAT='(f5.2)')+' mins, '+$
 					't_total ='+STRING(t_total*60, FORMAT='(f5.2)')+' mins, '+$
 					string(13B) + string(10B)+$
 					'(Note that the T_sys only counts for the sources at del > 20 deg)'+$
